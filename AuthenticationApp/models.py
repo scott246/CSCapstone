@@ -83,7 +83,7 @@ class MyUser(AbstractBaseUser):
     univ = models.CharField(
         max_length=120,
         null=True,
-        blank=True
+        blank=True,
         choices=UNIVS
     )
 
