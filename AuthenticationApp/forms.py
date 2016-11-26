@@ -4,12 +4,23 @@ Created by Naman Patwari on 10/4/2016.
 """
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import MyUser
+from .models import MyUser, Student, Professor, Engineer
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+USERS = (
+    ('STU','Student'),
+    ('PRO','Professor'),
+    ('ENG','Engineer'),
+)
+
+UNIVS = (
+    ('BSU','Ball State University'),
+    ('PU','Purdue University'),
+    ('ND','University of Notre Dame'),
+)
 
 class RegisterForm(forms.Form):
     """A form to creating new users. Includes all the required
@@ -19,7 +30,12 @@ class RegisterForm(forms.Form):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
-    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
+    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)
+
+    usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
+
+    univ = forms.ChoiceField(label="University (or alma mater)", choices=UNIVS, required=True)
+    about = forms.CharField(label="About me", widget=forms.TextInput, required=False)
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -47,12 +63,30 @@ class UpdateForm(forms.ModelForm):
     """
     password = ReadOnlyPasswordHashField()
 
+    def __init__(self, *args, **kwargs):
+        super(UpdateForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['usertype'].widget.attrs['disabled'] = 'disabled'
+
     class Meta:
-        model = MyUser        
-        fields = ('email', 'password', 'first_name', 'last_name')
+        model = MyUser
+        # if (usertype == 'Student'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
+        # if (usertype == 'Professor'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
+        # if (usertype == 'Engineer'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'universtiy', 'about')
+        fields = ('email', 'password', 'first_name', 'last_name', 'univ', 'usertype', 'about')
 
     def clean_password(self):            
-        return self.initial["password"]        
+        return self.initial["password"]  
+
+    def clean_usertype(self):
+        return self.initial["usertype"]      
+
+    def clean_about(self):
+        return self.cleaned_data.get("about")
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -123,4 +157,4 @@ class UserChangeForm(forms.ModelForm):
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
-        return self.initial["password"]        
+        return self.initial["password"]   
