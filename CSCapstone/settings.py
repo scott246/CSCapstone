@@ -16,6 +16,14 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+TINYMCE_JS_URL = '../static/js/tinymce/jquery.tinymce.min.js'
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,spellchecker,paste,searchreplace",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -44,6 +52,7 @@ INSTALLED_APPS = [
     'GroupsApp',
 	'UniversitiesApp',
     'CommentsApp',
+    'tinymce',
 ]
 
 MIDDLEWARE = [
