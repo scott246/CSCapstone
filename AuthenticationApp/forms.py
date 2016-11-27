@@ -5,6 +5,7 @@ Created by Naman Patwari on 10/4/2016.
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import MyUser, Student, Professor, Engineer
+from UniversitiesApp.models import University
 from tinymce.widgets import TinyMCE
 
 class LoginForm(forms.Form):
@@ -35,7 +36,7 @@ class RegisterForm(forms.Form):
 
     usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
 
-    univ = forms.ChoiceField(label="University (or alma mater)", choices=UNIVS, required=True)
+    univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
     about = forms.CharField(label="About me", widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
 
     def clean_password2(self):
@@ -88,6 +89,9 @@ class UpdateForm(forms.ModelForm):
 
     def clean_about(self):
         return self.cleaned_data.get("about")
+
+    def clean_univ(self):
+        return self.cleaned_data.get("univ")
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

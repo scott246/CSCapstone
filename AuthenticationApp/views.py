@@ -12,6 +12,8 @@ from django.contrib import messages
 
 from .forms import LoginForm, RegisterForm, UpdateForm
 from .models import MyUser, Student, Professor, Engineer
+from UniversitiesApp.models import University
+import UniversitiesApp
 
 # Auth Views
 
@@ -55,15 +57,18 @@ def auth_register(request):
 			first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
 			usertype=form.cleaned_data['usertype'],
 			about=form.cleaned_data['about'],
-			univ=form.cleaned_data['univ'])
+			univ=form.cleaned_data['univ'],
+			)
 		new_user.save()	
 		if (new_user.usertype == 'STU'):
 			#Also registering students		
 			new_student = Student(user = new_user)
+			UniversitiesApp.views.joinUniversity(request)
 			new_student.save()
 		if (new_user.usertype == 'PRO'):	
 			#Also registering professors
 			new_professor = Professor(user = new_user)
+			UniversitiesApp.views.joinUniversity(request)
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers
