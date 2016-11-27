@@ -63,12 +63,12 @@ def auth_register(request):
 		if (new_user.usertype == 'STU'):
 			#Also registering students		
 			new_student = Student(user = new_user)
-			UniversitiesApp.views.joinUniversity(request)
+			#UniversitiesApp.views.joinUniversity(request)
 			new_student.save()
 		if (new_user.usertype == 'PRO'):	
 			#Also registering professors
 			new_professor = Professor(user = new_user)
-			UniversitiesApp.views.joinUniversity(request)
+			#UniversitiesApp.views.joinUniversity(request)
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers

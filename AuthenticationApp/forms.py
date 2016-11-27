@@ -36,7 +36,9 @@ class RegisterForm(forms.Form):
 
     usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
 
-    univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
+    #univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
+    univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
+
     about = forms.CharField(label="About me", widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
 
     def clean_password2(self):

@@ -80,8 +80,12 @@ class MyUser(AbstractBaseUser):
         null=True,
         blank=True,
     )
-    univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
-
+    #univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
+    univ = models.CharField(
+        max_length=120,
+        null=True,
+        blank=True,
+    )
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
 
