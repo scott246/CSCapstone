@@ -7,6 +7,7 @@ from django.shortcuts import render
 
 from . import models
 from . import forms
+from AuthenticationApp.models import MyUser
 
 def getUniversities(request):
     if request.user.is_authenticated():
@@ -61,15 +62,46 @@ def getUniversityFormSuccess(request):
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 
+#helper function to alter database (join_university == true means joining a university, false means unjoining)
+def changeUniversityJoinedStatus(request, join_university):
+	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+        print(myuser.joined_university)
+        print(myuser.id)
+
+        #joining a university while already in a university renders error
+        if myuser.joined_university == True and join_university == True:
+        	return render(request, 'university.html', {'error': 'Error: already in a university'})
+
+        #unjoining a university when you are in a university changes the joined_university variable to false
+       	elif myuser.joined_university == True and join_university == False:
+       		myuser.joined_university = False
+       		myuser.save()
+       		print(models.MyUser.objects.get(id=request.user.id).joined_university)
+
+       	#joining a university when you aren't already in a university changes the joined_university variable to true
+        elif myuser.joined_university == False and join_university == True:
+	        myuser.joined_university = True
+	        myuser.save()	
+        	print(models.MyUser.objects.get(id=request.user.id).joined_university)
+
+        #unjoining a university and not being in a university (shouldnt ever happen)
+        elif myuser.joined_university == False and join_university == False:
+        	print("wait what?")
+        	return render(request, 'university.html', {'error': 'Error: cannot be in a negative number of universities'})
+
+
 def joinUniversity(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
+        changeUniversityJoinedStatus(request, True)
         in_university = models.University.objects.get(name__exact=in_name)
         in_university.members.add(request.user)
         in_university.save();
         request.user.university_set.add(in_university)
         request.user.save()
         context = {
+        	'user' : request.user,
             'university' : in_university,
             'userIsMember': True,
         }
@@ -79,12 +111,14 @@ def joinUniversity(request):
 def unjoinUniversity(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
+        changeUniversityJoinedStatus(request, False)
         in_university = models.University.objects.get(name__exact=in_name)
         in_university.members.remove(request.user)
         in_university.save();
         request.user.university_set.remove(in_university)
         request.user.save()
         context = {
+        	'user' : request.user,
             'university' : in_university,
             'userIsMember': False,
         }
@@ -108,6 +142,11 @@ def getCourse(request):
 
 def courseForm(request):
 	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+		print(myuser.usertype)
+		if (myuser.usertype != 'PRO'):
+			return render(request, 'autherror.html')
+
 		in_university_name = request.GET.get('name', 'None')
 		in_university = models.University.objects.get(name__exact=in_university_name)
 		context = {
@@ -119,6 +158,11 @@ def courseForm(request):
 
 def addCourse(request):
 	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+		print(myuser.usertype)
+		if (myuser.usertype != 'PRO'):
+			return render(request, 'autherror.html')
+
 		if request.method == 'POST':
 			form = forms.CourseForm(request.POST)
 			if form.is_valid():
@@ -148,6 +192,10 @@ def addCourse(request):
 		
 def removeCourse(request):
 	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+		if (myuser.usertype != 'PRO'):
+			return render(request, 'autherror.html')
+
 		in_university_name = request.GET.get('name', 'None')
 		in_university = models.University.objects.get(name__exact=in_university_name)
 		in_course_tag = request.GET.get('course', 'None')
@@ -160,6 +208,28 @@ def removeCourse(request):
 		}
 		return render(request, 'university.html', context)
 	# render error page if user is not logged in
+	return render(request, 'autherror.html')
+
+def removeStudent(request):
+	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+		if (myuser.usertype != 'PRO'):
+			print(myuser.usertype)
+			return render(request, 'autherror.html')
+
+		in_university_name = request.GET.get('name', 'None')
+		in_university = models.University.objects.get(name__exact=in_university_name)
+		in_course_tag = request.GET.get('course', 'None')
+		in_course = in_university.course_set.get(tag__exact=in_course_tag)
+		in_student_email = request.GET.get('student', 'None')
+		in_student = in_course.members.filter(email__exact=in_student_email)
+		in_course.members.remove(in_student.first())
+		context = {
+			'university' : in_university,
+			'course' : in_course,
+			'student' : in_student,
+		}
+		return render(request, 'course.html', context)
 	return render(request, 'autherror.html')
 
 def joinCourse(request):

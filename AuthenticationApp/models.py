@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
 
+from tinymce.widgets import TinyMCE
+
 # Create your models here.
 class MyUserManager(BaseUserManager):
     def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, univ=None):
@@ -79,6 +81,7 @@ class MyUser(AbstractBaseUser):
         max_length=120,
         null=True,
         blank=True,
+        #widget=TinyMCE(attrs={'cols': 80, 'rows': 10}),
     )
     #univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
     univ = models.CharField(
@@ -86,6 +89,7 @@ class MyUser(AbstractBaseUser):
         null=True,
         blank=True,
     )
+    joined_university = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
 
@@ -104,6 +108,12 @@ class MyUser(AbstractBaseUser):
 
     def get_short_name(self):        
         return self.first_name
+
+    def get_email(self):
+        return self.email
+
+    def in_university(self):
+        return self.joined_university
 
     def __str__(self):              #Python 3
         return self.email

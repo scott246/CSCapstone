@@ -28,6 +28,7 @@
 					{% for item in course.members.all %}
 					<tr>
 						<td>{{ item.get_full_name }}</td>
+						<td><a href="/university/course/remove/student?name={{university.name}}&course={{ course.tag }}&student={{item.get_email}}" class="btn btn-default">Remove Student</a>
 					</tr>
 					{% endfor %}
 				</tbody>
