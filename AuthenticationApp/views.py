@@ -8,12 +8,16 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib import messages
-
-
+from . import models
+from UniversitiesApp import models
+from . import forms
 from .forms import LoginForm, RegisterForm, UpdateForm
 from .models import MyUser, Student, Professor, Engineer
 from UniversitiesApp.models import University
 import UniversitiesApp
+from django.core.handlers.wsgi import WSGIRequest
+from StringIO import StringIO
+
 
 # Auth Views
 
@@ -57,22 +61,26 @@ def auth_register(request):
 			first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
 			usertype=form.cleaned_data['usertype'],
 			about=form.cleaned_data['about'],
-			univ=form.cleaned_data['univ'],
+			#univ=form.cleaned_data['univ'],
 			)
 		new_user.save()	
 		if (new_user.usertype == 'STU'):
 			#Also registering students		
-			new_student = Student(user = new_user)
-			#UniversitiesApp.views.joinUniversity(request)
+			new_student = Student(user = new_user, univ=form.cleaned_data['univ'])
+			in_university = models.University.objects.get(name__exact=form.cleaned_data['univ'].name)
+			in_university.members.add(new_user)
+			in_university.save();
 			new_student.save()
 		if (new_user.usertype == 'PRO'):	
 			#Also registering professors
-			new_professor = Professor(user = new_user)
-			#UniversitiesApp.views.joinUniversity(request)
+			new_professor = Professor(user = new_user, univ=form.cleaned_data['univ'])
+			in_university = models.University.objects.get(name__exact=form.cleaned_data['univ'].name)
+			in_university.members.add(new_user)
+			in_university.save();
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers
-			new_engineer = Engineer(user = new_user)
+			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'])
 			new_engineer.save()
 		login(request, new_user);	
 		messages.success(request, 'Success! Your account was created.')
@@ -85,6 +93,21 @@ def auth_register(request):
 		"links" : ["login"],
 	}
 	return render(request, 'auth_form.html', context)
+
+def joinUniversityById(request):
+    print(request)
+    in_id = request.GET.get('name', 'None')
+    #changeUniversityJoinedStatus(request, True)
+    in_university = models.University.objects.get(name__exact=in_id)
+    in_university.members.add(request.user)
+    in_university.save();
+    request.user.university_set.add(in_university)
+    request.user.save()
+    context = {
+    	'user' : request.user,
+        'university' : in_university,
+        'userIsMember': True,
+    }
 
 @login_required
 def update_profile(request):

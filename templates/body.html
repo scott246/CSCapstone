@@ -33,12 +33,16 @@
 					</li>
 					<li role="presentation" class="dropdown">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-						  Create new Group/Organization <span class="caret"></span>
+						  Create... <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
+							{% if user.usertype == 'ENG' %}
 							<li><a href="/company/form">Create Company</a></li>
+							{% elif user.usertype == 'PRO' %}
 							<li><a href="/university/form">Create University</a></li>
+							{% elif user.usertype == 'STU' %}
 							<li><a href="/group/form">Create Group</a></li>
+							{% endif %}
 						</ul>
 					</li>
 					<li><a href="/logout">Logout</a></li>

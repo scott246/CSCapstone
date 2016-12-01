@@ -12,7 +12,7 @@ from tinymce.widgets import TinyMCE
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, univ=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -24,7 +24,7 @@ class MyUserManager(BaseUserManager):
         user.last_name = last_name
         user.usertype = usertype
         user.about = about
-        user.univ = univ
+        #user.univ = univ
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
@@ -84,12 +84,13 @@ class MyUser(AbstractBaseUser):
         #widget=TinyMCE(attrs={'cols': 80, 'rows': 10}),
     )
     #univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
-    univ = models.CharField(
-        max_length=120,
-        null=True,
-        blank=True,
-    )
-    joined_university = models.BooleanField(default=False)
+    #univ = models.OneToOneField('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
+    # univ = models.CharField(
+    #     max_length=120,
+    #     null=True,
+    #     blank=True,
+    # )
+    #joined_university = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
 
@@ -143,6 +144,7 @@ class Student(models.Model):
         MyUser,
         on_delete=models.CASCADE,
         primary_key=True)
+    univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
@@ -172,6 +174,7 @@ class Professor(models.Model):
         MyUser,
         on_delete=models.CASCADE,
         primary_key=True)
+    univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
@@ -199,7 +202,12 @@ class Engineer(models.Model):
     user = models.OneToOneField(
         MyUser,
         on_delete=models.CASCADE,
-        primary_key=True)   
+        primary_key=True) 
+    univ = models.CharField(
+        max_length=120,
+        null=True,
+        blank=True,
+     )  
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)

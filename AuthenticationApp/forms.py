@@ -36,8 +36,8 @@ class RegisterForm(forms.Form):
 
     usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
 
-    #univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
-    univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
+    univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
+    #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
 
     about = forms.CharField(label="About me", widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
 
@@ -60,6 +60,7 @@ class RegisterForm(forms.Form):
         except:
             raise forms.ValidationError("There was an error, please contact us later")
 
+
 class UpdateForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
@@ -81,7 +82,7 @@ class UpdateForm(forms.ModelForm):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
         # if (usertype == 'Engineer'):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'universtiy', 'about')
-        fields = ('email', 'password', 'first_name', 'last_name', 'univ', 'usertype', 'about')
+        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about')
 
     def clean_password(self):            
         return self.initial["password"]  
