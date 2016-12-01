@@ -76,6 +76,8 @@ def changeUniversityJoinedStatus(usertype, uid, university, univid, join_univers
 		myuser = AuthenticationApp.models.Student.objects.get(user_id__exact=uid)
 	if usertype == 'PRO':
 		myuser = AuthenticationApp.models.Professor.objects.get(user_id__exact=uid)
+	if usertype == 'ENG':
+		return 'error'
 
 	#joining a university while already in a university renders error
 	if myuser.univ_id != 0 and join_university == True:
