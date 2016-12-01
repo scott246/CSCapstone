@@ -62,6 +62,8 @@ def auth_register(request):
 			usertype=form.cleaned_data['usertype'],
 			about=form.cleaned_data['about'],
 			#univ=form.cleaned_data['univ'],
+			skills=form.cleaned_data['skills'],
+			yearsProgramming=form.cleaned_data['yearsprogramming']
 			)
 		new_user.save()	
 		if (new_user.usertype == 'STU'):

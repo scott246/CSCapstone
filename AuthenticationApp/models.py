@@ -5,6 +5,7 @@ Created by Naman Patwari on 10/4/2016.
 
 from __future__ import unicode_literals
 from django.db import models
+from tinymce import models as tinymce_models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
 
@@ -12,7 +13,7 @@ from tinymce.widgets import TinyMCE
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, skills=None, yearsProgramming=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -25,6 +26,8 @@ class MyUserManager(BaseUserManager):
         user.usertype = usertype
         user.about = about
         #user.univ = univ
+        user.skills = skills
+        user.yearsProgramming = yearsProgramming
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
@@ -45,11 +48,21 @@ USERS = (
     ('ENG','Engineer'),
 )
 
-UNIVS = (
-    ('BSU','Ball State University'),
-    ('PU','Purdue University'),
-    ('ND','University of Notre Dame'),
-)
+SKILLS = {
+    ('C', 'C'),
+    ('JAV', 'Java'),
+    ('C++', 'C++'),
+    ('PYT', 'Python'),
+    ('HTM', 'HTML/CSS'),
+    ('SQL', 'SQL'),
+    ('RUB', 'Ruby'),
+    ('JS', 'JavaScript'),
+    ('C#', 'C#'),
+    ('PHP', 'PHP'),
+    ('IOS', 'iOS'),
+    ('AND', 'Android'),
+    ('WEB', 'Web Development'),
+}
 
 
 class MyUser(AbstractBaseUser):
@@ -77,12 +90,21 @@ class MyUser(AbstractBaseUser):
         blank=True,
         choices=USERS,
     )
-    about = models.CharField(
+    about = tinymce_models.HTMLField(
+        default='')
+
+    skills = models.CharField(
         max_length=120,
         null=True,
         blank=True,
-        #widget=TinyMCE(attrs={'cols': 80, 'rows': 10}),
     )
+
+    yearsProgramming = models.CharField(
+        max_length=3,
+        null=True,
+        blank=True,
+    )
+
     #univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
     #univ = models.OneToOneField('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
     # univ = models.CharField(

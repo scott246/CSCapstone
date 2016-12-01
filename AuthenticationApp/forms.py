@@ -18,10 +18,20 @@ USERS = (
     ('ENG','Engineer'),
 )
 
-UNIVS = (
-    ('BSU','Ball State University'),
-    ('PU','Purdue University'),
-    ('ND','University of Notre Dame'),
+SKILLS = (
+    ('C', 'C'),
+    ('JAV', 'Java'),
+    ('C++', 'C++'),
+    ('PYT', 'Python'),
+    ('HTM', 'HTML/CSS'),
+    ('SQL', 'SQL'),
+    ('RUB', 'Ruby'),
+    ('JS', 'JavaScript'),
+    ('C#', 'C#'),
+    ('PHP', 'PHP'),
+    ('IOS', 'iOS'),
+    ('AND', 'Android'),
+    ('WEB', 'Web Development'),
 )
 
 class RegisterForm(forms.Form):
@@ -38,6 +48,9 @@ class RegisterForm(forms.Form):
 
     univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
     #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
+    skills = forms.MultipleChoiceField(label="Skills (hold <CTRL> or <COMMAND> to select multiple)", choices=SKILLS, required=False)
+
+    yearsprogramming = forms.CharField(label="Years Programming", required=True)
 
     about = forms.CharField(label="About me", widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
 
@@ -82,7 +95,7 @@ class UpdateForm(forms.ModelForm):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
         # if (usertype == 'Engineer'):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'universtiy', 'about')
-        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about')
+        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about', 'yearsProgramming', 'skills')
 
     def clean_password(self):            
         return self.initial["password"]  

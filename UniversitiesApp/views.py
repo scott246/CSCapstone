@@ -150,7 +150,6 @@ def getCourse(request):
 		is_pro = False
 		if MyUser.objects.get(email__exact=request.user.email).usertype == 'PRO':
 			is_pro = True
-			print("im a prof yo")
 		else:
 			is_pro = False
 
@@ -166,7 +165,6 @@ def getCourse(request):
 def courseForm(request):
 	if request.user.is_authenticated():
 		myuser = MyUser.objects.get(id__exact=request.user.id)
-		print(myuser.usertype)
 		if (myuser.usertype != 'PRO'):
 			return render(request, 'autherror.html')
 
