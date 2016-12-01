@@ -8,6 +8,8 @@ from django.shortcuts import render
 from . import models
 from . import forms
 
+from AuthenticationApp.models import MyUser
+
 def getCompanies(request):
     if request.user.is_authenticated():
         companies_list = models.Company.objects.all()
@@ -63,6 +65,10 @@ def getCompanyFormSuccess(request):
 
 def joinCompany(request):
     if request.user.is_authenticated():
+        myuser = MyUser.objects.get(id__exact=request.user.id)
+        if (myuser.usertype != 'ENG'):
+            return render(request, 'autherror.html')
+
         in_name = request.GET.get('name', 'None')
         in_company = models.Company.objects.get(name__exact=in_name)
         in_company.members.add(request.user)
@@ -78,6 +84,10 @@ def joinCompany(request):
     
 def unjoinCompany(request):
     if request.user.is_authenticated():
+        myuser = MyUser.objects.get(id__exact=request.user.id)
+        if (myuser.usertype != 'ENG'):
+            return render(request, 'autherror.html')
+            
         in_name = request.GET.get('name', 'None')
         in_company = models.Company.objects.get(name__exact=in_name)
         in_company.members.remove(request.user)

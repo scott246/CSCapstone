@@ -4,12 +4,35 @@ Created by Naman Patwari on 10/4/2016.
 """
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import MyUser
+from .models import MyUser, Student, Professor, Engineer
+from UniversitiesApp.models import University
+from tinymce.widgets import TinyMCE
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+USERS = (
+    ('STU','Student'),
+    ('PRO','Professor'),
+    ('ENG','Engineer'),
+)
+
+SKILLS = (
+    ('C', 'C'),
+    ('JAV', 'Java'),
+    ('C++', 'C++'),
+    ('PYT', 'Python'),
+    ('HTM', 'HTML/CSS'),
+    ('SQL', 'SQL'),
+    ('RUB', 'Ruby'),
+    ('JS', 'JavaScript'),
+    ('C#', 'C#'),
+    ('PHP', 'PHP'),
+    ('IOS', 'iOS'),
+    ('AND', 'Android'),
+    ('WEB', 'Web Development'),
+)
 
 class RegisterForm(forms.Form):
     """A form to creating new users. Includes all the required
@@ -19,7 +42,17 @@ class RegisterForm(forms.Form):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
-    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
+    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)
+
+    usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
+
+    univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
+    #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
+    skills = forms.MultipleChoiceField(label="Skills (hold <CTRL> or <COMMAND> to select multiple)", choices=SKILLS, required=False)
+
+    yearsprogramming = forms.CharField(label="Years Programming", required=True)
+
+    about = forms.CharField(label="About me", widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -40,6 +73,7 @@ class RegisterForm(forms.Form):
         except:
             raise forms.ValidationError("There was an error, please contact us later")
 
+
 class UpdateForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
@@ -47,12 +81,33 @@ class UpdateForm(forms.ModelForm):
     """
     password = ReadOnlyPasswordHashField()
 
+    def __init__(self, *args, **kwargs):
+        super(UpdateForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['usertype'].widget.attrs['disabled'] = 'disabled'
+
     class Meta:
-        model = MyUser        
-        fields = ('email', 'password', 'first_name', 'last_name')
+        model = MyUser
+        # if (usertype == 'Student'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
+        # if (usertype == 'Professor'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
+        # if (usertype == 'Engineer'):
+        #     fields = ('email', 'password', 'first_name', 'last_name', 'universtiy', 'about')
+        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about', 'yearsProgramming', 'skills')
 
     def clean_password(self):            
-        return self.initial["password"]        
+        return self.initial["password"]  
+
+    def clean_usertype(self):
+        return self.initial["usertype"]      
+
+    def clean_about(self):
+        return self.cleaned_data.get("about")
+
+    def clean_univ(self):
+        return self.cleaned_data.get("univ")
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -123,4 +178,4 @@ class UserChangeForm(forms.ModelForm):
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
-        return self.initial["password"]        
+        return self.initial["password"]   

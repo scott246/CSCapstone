@@ -5,12 +5,15 @@ Created by Naman Patwari on 10/4/2016.
 
 from __future__ import unicode_literals
 from django.db import models
+from tinymce import models as tinymce_models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
 
+from tinymce.widgets import TinyMCE
+
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, skills=None, yearsProgramming=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -18,7 +21,13 @@ class MyUserManager(BaseUserManager):
         #Only the email field is required
         user = self.model(email=email)
         user.set_password(password)
+        user.first_name = first_name
         user.last_name = last_name
+        user.usertype = usertype
+        user.about = about
+        #user.univ = univ
+        user.skills = skills
+        user.yearsProgramming = yearsProgramming
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
@@ -33,6 +42,28 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+USERS = (
+    ('STU','Student'),
+    ('PRO','Professor'),
+    ('ENG','Engineer'),
+)
+
+SKILLS = {
+    ('C', 'C'),
+    ('JAV', 'Java'),
+    ('C++', 'C++'),
+    ('PYT', 'Python'),
+    ('HTM', 'HTML/CSS'),
+    ('SQL', 'SQL'),
+    ('RUB', 'Ruby'),
+    ('JS', 'JavaScript'),
+    ('C#', 'C#'),
+    ('PHP', 'PHP'),
+    ('IOS', 'iOS'),
+    ('AND', 'Android'),
+    ('WEB', 'Web Development'),
+}
+
 
 class MyUser(AbstractBaseUser):
     email = models.EmailField(
@@ -45,14 +76,43 @@ class MyUser(AbstractBaseUser):
     	max_length=120,
     	null=True,
     	blank=True,
-    	)    
+    )    
 
     last_name = models.CharField(
     	max_length=120,
     	null=True,
     	blank=True,
-    	)
+    )
 
+    usertype = models.CharField(
+        max_length=3,
+        null=True,
+        blank=True,
+        choices=USERS,
+    )
+    about = tinymce_models.HTMLField(
+        default='')
+
+    skills = models.CharField(
+        max_length=120,
+        null=True,
+        blank=True,
+    )
+
+    yearsProgramming = models.CharField(
+        max_length=3,
+        null=True,
+        blank=True,
+    )
+
+    #univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
+    #univ = models.OneToOneField('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
+    # univ = models.CharField(
+    #     max_length=120,
+    #     null=True,
+    #     blank=True,
+    # )
+    #joined_university = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
 
@@ -71,6 +131,12 @@ class MyUser(AbstractBaseUser):
 
     def get_short_name(self):        
         return self.first_name
+
+    def get_email(self):
+        return self.email
+
+    def in_university(self):
+        return self.joined_university
 
     def __str__(self):              #Python 3
         return self.email
@@ -100,6 +166,7 @@ class Student(models.Model):
         MyUser,
         on_delete=models.CASCADE,
         primary_key=True)
+    univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
@@ -123,3 +190,65 @@ class Student(models.Model):
     @property
     def is_staff(self):
         return False
+
+class Professor(models.Model):
+    user = models.OneToOneField(
+        MyUser,
+        on_delete=models.CASCADE,
+        primary_key=True)
+    univ = models.ForeignKey('UniversitiesApp.University', on_delete=models.CASCADE, default=1)
+
+    def get_full_name(self):        
+        return "%s %s" %(self.user.first_name, self.user.last_name)
+
+    def get_short_name(self):        
+        return self.user.first_name
+
+    def __str__(self):              #Python 3
+        return self.user.email
+
+    def __unicode__(self):           # Python 2
+        return self.user.email
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):        
+        return True
+
+    @property
+    def is_staff(self):
+        return True
+
+class Engineer(models.Model):
+    user = models.OneToOneField(
+        MyUser,
+        on_delete=models.CASCADE,
+        primary_key=True) 
+    univ = models.CharField(
+        max_length=120,
+        null=True,
+        blank=True,
+     )  
+
+    def get_full_name(self):        
+        return "%s %s" %(self.user.first_name, self.user.last_name)
+
+    def get_short_name(self):        
+        return self.user.first_name
+
+    def __str__(self):              #Python 3
+        return self.user.email
+
+    def __unicode__(self):           # Python 2
+        return self.user.email
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):        
+        return True
+
+    @property
+    def is_staff(self):
+        return True
