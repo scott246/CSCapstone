@@ -253,6 +253,28 @@ def removeStudent(request):
 		return render(request, 'course.html', context)
 	return render(request, 'autherror.html')
 
+def addStudent(request):
+	if request.user.is_authenticated():
+		myuser = MyUser.objects.get(id__exact=request.user.id)
+		if (myuser.usertype != 'PRO'):
+			print(myuser.usertype)
+			return render(request, 'autherror.html')
+
+		in_university_name = request.GET.get('name', 'None')
+		in_university = models.University.objects.get(name__exact=in_university_name)
+		in_course_tag = request.GET.get('course', 'None')
+		in_course = in_university.course_set.get(tag__exact=in_course_tag)
+		in_student_email = request.GET.get('student', 'None')
+		in_student = in_university.members.filter(email__exact=in_student_email)
+		in_course.members.add(in_student.first())
+		context = {
+			'university' : in_university,
+			'course' : in_course,
+			'student' : in_student,
+		}
+		return render(request, 'course.html', context)
+	return render(request, 'autherror.html')
+
 def joinCourse(request):
 	if request.user.is_authenticated():
 		in_university_name = request.GET.get('name', 'None')

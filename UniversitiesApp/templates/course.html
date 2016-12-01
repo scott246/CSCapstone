@@ -38,6 +38,25 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			{% if user.usertype == 'PRO' %}
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th>Add a student:</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in university.members.all %}
+					<tr>
+						<td>{{ item.get_full_name }}</td>
+						{% if user.usertype == 'PRO' %}
+						<td><a href="/university/course/add/student?name={{university.name}}&course={{ course.tag }}&student={{item.get_email}}" class="btn btn-default">Add Student</a>
+						{% endif %}
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
 		</div>
 	</div>
 	
