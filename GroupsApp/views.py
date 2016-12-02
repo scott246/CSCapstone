@@ -5,7 +5,6 @@ from django.shortcuts import render, render_to_response
 
 from . import models
 from . import forms
-from .forms import MemberForm
 from AuthenticationApp.models import MyUser
 import AuthenticationApp
 
