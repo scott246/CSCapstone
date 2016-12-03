@@ -1,10 +1,12 @@
 """GroupsApp Views
 Created by Naman Patwari on 10/10/2016.
 """
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 
 from . import models
 from . import forms
+from AuthenticationApp.models import MyUser
+import AuthenticationApp
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -53,6 +55,27 @@ def getGroupFormSuccess(request):
         return render(request, 'groupform.html')
     # render error page if user is not logged in
     return render(request, 'autherror.html')
+
+def addMember(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_email = request.POST.get('email', 'None')
+        in_group = models.Group.objects.get(name__exact=in_name)
+        try:
+            in_member = models.MyUser.objects.get(email__exact=in_email)
+        except models.MyUser.DoesNotExist:
+            return render(request, 'generalerror.html')
+        in_group.members.add(in_member)
+        in_group.save();
+        in_member.group_set.add(in_group)
+        in_member.save()
+        context = {
+            'group' : in_group,
+            'userIsMember': True,
+        }
+        return render(request, 'group.html', context)
+    return render(request, 'autherror.html')
+
 
 def joinGroup(request):
     if request.user.is_authenticated():
