@@ -9,12 +9,20 @@
 				<thead>
 					<tr>
 						<th>Project Name</th>
+						<th>Company</th>
+						<th> </th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for project in projects %}
 					<tr>
 						<td>{{ project.name }}</td>
+						<td>{{ project.company }}</td>
+						{% if userInCompany %}
+						<td>
+							<a href="/project/update?name={{ project.name }}" class="btn btn-default">Modify Project</a>
+						</td>
+						{% endif %}
 					</tr>
 					{% endfor %}
 				</tbody>

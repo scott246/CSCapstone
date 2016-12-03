@@ -9,14 +9,22 @@ from . import models
 from .models import Project
 from CompaniesApp.models import Company
 from . import forms
-from .forms import ProjectForm
+from .forms import ProjectForm, UpdateForm
 from datetime import datetime
 
 def getProjects(request):
 	projects_list = models.Project.objects.all()
-	return render(request, 'projects.html', {
-        'projects': projects_list,
-    })
+	if request.user.usertype == 'ENG':
+		context = {
+			'userInCompany': True,
+			'projects': projects_list,
+		}
+	else:
+		context = {
+			'userInCompany': False,
+			'projects': projects_list,
+		}
+	return render(request, 'projects.html', context)
 
 def getProject(request):
 	return render(request, 'project.html')
@@ -53,5 +61,20 @@ def getProjectFormSuccess(request):
 			}
 		else:
 			form = forms.ProjectForm()
+	return render(request, 'generalerror.html')
+
+def updateProject(request):
+	if request.user.is_authenticated() and request.user.usertype == 'ENG' and models.Company.objects.get(members__exact=request.user.id) != None:
+		form = UpdateForm(request.POST or None, instance=models.Project.objects.get(name=request.GET.get('name', 'None')))
+		if form.is_valid():
+			form.save()
+
+		context = {
+			"form": form,
+			"page_name" : "Update",
+			"button_value" : "Update",
+			"links" : ["logout"],
+		}
+		return render(request, 'projectform.html', context)
 	return render(request, 'generalerror.html')
 
