@@ -25,6 +25,10 @@
 						<td>
 							<a href="/project/remove?name={{project.name}}" class="btn btn-default">Delete Project</a>
 						</td>
+						{% elif userInGroup %}
+						<td>
+							<a href="/project/take?name={{project.name}}" class="btn btn-default">Claim this Project</a>
+						</td>
 						{% endif %}
 					</tr>
 					{% endfor %}
