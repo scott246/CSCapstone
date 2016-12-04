@@ -8,20 +8,27 @@ from django.http import HttpResponseRedirect, HttpResponse
 from . import models
 from .models import Project
 from CompaniesApp.models import Company
+from GroupsApp.models import Group
 from . import forms
 from .forms import ProjectForm, UpdateForm
 from datetime import datetime
 
 def getProjects(request):
 	projects_list = models.Project.objects.all()
+	if Group.objects.get(members=request.user.id) != None:
+		inGroup = True
+	else:
+		inGroup = False
 	if request.user.usertype == 'ENG':
 		context = {
 			'userInCompany': True,
+			'userInGroup': inGroup,
 			'projects': projects_list,
 		}
 	else:
 		context = {
 			'userInCompany': False,
+			'userInGroup': inGroup,
 			'projects': projects_list,
 		}
 	return render(request, 'projects.html', context)
@@ -33,8 +40,6 @@ def getProjectForm(request):
 	if request.user.is_authenticated() and request.user.usertype == 'ENG':
 		form = forms.ProjectForm()
 		return render(request, 'projectform.html', {'form': form, 'button_value': 'Submit'})
-		print request.user.usertype
-		print request.user.is_authenticated
 	return render(request, 'generalerror.html', context)
 
 def getProjectFormSuccess(request):
@@ -84,6 +89,18 @@ def updateProject(request):
 		}
 		return render(request, 'projectform.html', context)
 	#return render(request, 'generalerror.html')
+
+def takeProject(request):
+	if request.user.is_authenticated():
+		if Group.objects.get(members=request.user.id) != None:
+			in_group = Group.objects.get(members=request.user.id)
+			in_group.project = models.Project.objects.get(name=request.GET.get('name', 'None'))
+			in_group.save()
+			context = {
+				'userInGroup': True
+			}
+			return render(request, 'index.html')
+	return render(request, 'autherror.html')
 
 def removeProject(request):
 	if request.user.is_authenticated():
