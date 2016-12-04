@@ -40,7 +40,9 @@ def getProjectForm(request):
 def getProjectFormSuccess(request):
 	if request.user.is_authenticated() and request.user.usertype == 'ENG':
 		if request.method == 'POST':
-			form = forms.ProjectForm(request.POST or None)
+			form = forms.ProjectForm(request.POST, request.FILES)
+			# print form
+			# print form.is_valid()
 			if form.is_valid():
 				new_project = Project()
 				new_project.create_project(
@@ -64,7 +66,12 @@ def getProjectFormSuccess(request):
 	return render(request, 'generalerror.html')
 
 def updateProject(request):
-	if request.user.is_authenticated() and request.user.usertype == 'ENG' and models.Company.objects.get(members__exact=request.user.id) != None:
+	# print request.user.is_authenticated()
+	# print request.user.usertype
+	# print models.Company.objects.get(members=request.user.id)
+	# print models.Project.objects.get(name=request.GET.get('name', 'None')).company
+	#make sure user is authenticated, is engineer, and belongs to the same company that created the project
+	if request.user.is_authenticated() and request.user.usertype == 'ENG' and models.Company.objects.get(members=request.user.id) == models.Project.objects.get(name=request.GET.get('name', 'None')).company:
 		form = UpdateForm(request.POST or None, instance=models.Project.objects.get(name=request.GET.get('name', 'None')))
 		if form.is_valid():
 			form.save()
@@ -76,5 +83,5 @@ def updateProject(request):
 			"links" : ["logout"],
 		}
 		return render(request, 'projectform.html', context)
-	return render(request, 'generalerror.html')
+	#return render(request, 'generalerror.html')
 
