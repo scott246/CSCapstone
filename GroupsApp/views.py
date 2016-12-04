@@ -106,4 +106,18 @@ def unjoinGroup(request):
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
+
+def removeGroup(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+
+        in_group = models.Group.objects.get(name=in_name)
+        in_group.delete()
+        context = {
+            'group' : in_group,
+            'userIsMember': False,
+        }
+        return render(request, 'index.html', context)
+    # render error page if user is not logged in
+    return render(request, 'autherror.html')
     

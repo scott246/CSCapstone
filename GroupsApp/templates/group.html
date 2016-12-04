@@ -15,6 +15,7 @@
 				<input type="text" name="email" id="email" placeholder="Input email of a user you want to add..." class="form-control" data-bvalidator="required" data-bvalidator-msg="Email Required" maxlength="150">
 				<input type="submit" value="Add Member" class="btn btn-default">
 			</form>
+			<a href="/group/remove?name={{group.name}}" class="btn btn-default">Disband Group</a>
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}

@@ -85,3 +85,16 @@ def updateProject(request):
 		return render(request, 'projectform.html', context)
 	#return render(request, 'generalerror.html')
 
+def removeProject(request):
+	if request.user.is_authenticated():
+		if (models.Project.objects.get(name=request.GET.get('name', 'None')).company == models.Company.objects.get(members=request.user.id)):
+			in_project = models.Project.objects.get(name=request.GET.get('name', 'None'))
+			in_project.delete()
+			context = {
+				'project' : in_project,
+				'userInCompany': True,
+			}
+			return render(request, 'index.html', context)
+	# render error page if user is not logged in
+	return render(request, 'autherror.html')
+
