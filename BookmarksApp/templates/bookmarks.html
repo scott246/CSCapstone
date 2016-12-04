@@ -1,0 +1,22 @@
+{% extends "body.html" %}
+{% block content %}
+    <!-- Content -->
+    <div class="container" role="main">
+        <div class="table-responsive">
+            <table class="table table-striped sortable">
+                <thead>
+                    <tr>
+                      <th style="width: 100%">Bookmark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   {% for item in bookmarks %}
+                   <tr>
+                       <td>{{ item.project_id }}</td>
+                   </tr>
+                   {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
