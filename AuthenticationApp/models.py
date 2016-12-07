@@ -21,6 +21,7 @@ class MyUserManager(BaseUserManager):
         #Only the email field is required
         user = self.model(email=email)
         user.set_password(password)
+        user.save()
         user.first_name = first_name
         user.last_name = last_name
         user.usertype = usertype

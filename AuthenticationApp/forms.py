@@ -33,8 +33,8 @@ class RegisterForm(forms.Form):
 
     univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
     #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
-    skills = forms.ModelChoiceField(label="Skills", queryset=Skill.objects.all(), to_field_name='name', required=False)
-    specialty = forms.ModelChoiceField(label="Specialty", queryset=Specialty.objects.all(), to_field_name='name', required=False)
+    skills = forms.ModelMultipleChoiceField(label="Skills", queryset=Skill.objects.all(), to_field_name='name', required=False)
+    specialty = forms.ModelMultipleChoiceField(label="Specialty", queryset=Specialty.objects.all(), to_field_name='name', required=False)
 
     yearsprogramming = forms.CharField(label="Years Programming", required=True)
 
