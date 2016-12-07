@@ -30,9 +30,9 @@ class Project(models.Model):
     created_at = models.DateTimeField('date created')
     updated_at = models.DateTimeField('date updated')
     company = models.ForeignKey('CompaniesApp.Company', default=0)
-    languages = models.CharField(max_length=200, default='NON')
+    languages = models.ManyToManyField('SkillsApp.Skill', related_name='languages')
     yearsProgramming = models.CharField(max_length=3, default='0')
-    specialty = models.CharField(max_length=200, default='0')
+    specialty = models.ManyToManyField('SkillsApp.Specialty', related_name='specialty')
 
     # TODO Task 3.5: Add field for company relationship
     # TODO Task 3.5: Add fields for project qualifications (minimum required: programming language, years of experience, speciality)

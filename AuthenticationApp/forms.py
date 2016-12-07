@@ -6,6 +6,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import MyUser, Student, Professor, Engineer
 from UniversitiesApp.models import University
+from SkillsApp.models import Skill, Specialty
 from tinymce.widgets import TinyMCE
 
 class LoginForm(forms.Form):
@@ -16,22 +17,6 @@ USERS = (
     ('STU','Student'),
     ('PRO','Professor'),
     ('ENG','Engineer'),
-)
-
-SKILLS = (
-    ('C', 'C'),
-    ('JAV', 'Java'),
-    ('C++', 'C++'),
-    ('PYT', 'Python'),
-    ('HTM', 'HTML/CSS'),
-    ('SQL', 'SQL'),
-    ('RUB', 'Ruby'),
-    ('JS', 'JavaScript'),
-    ('C#', 'C#'),
-    ('PHP', 'PHP'),
-    ('IOS', 'iOS'),
-    ('AND', 'Android'),
-    ('WEB', 'Web Development'),
 )
 
 class RegisterForm(forms.Form):
@@ -48,7 +33,8 @@ class RegisterForm(forms.Form):
 
     univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=True)
     #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
-    skills = forms.MultipleChoiceField(label="Skills (hold <CTRL> or <COMMAND> to select multiple)", choices=SKILLS, required=False)
+    skills = forms.ModelMultipleChoiceField(label="Skills", queryset=Skill.objects.all(), to_field_name='name', required=False)
+    specialty = forms.ModelMultipleChoiceField(label="Specialty", queryset=Specialty.objects.all(), to_field_name='name', required=False)
 
     yearsprogramming = forms.CharField(label="Years Programming", required=True)
 
@@ -95,7 +81,7 @@ class UpdateForm(forms.ModelForm):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'university', 'about')
         # if (usertype == 'Engineer'):
         #     fields = ('email', 'password', 'first_name', 'last_name', 'universtiy', 'about')
-        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about', 'yearsProgramming', 'skills')
+        fields = ('email', 'password', 'first_name', 'last_name', 'usertype', 'about', 'yearsProgramming', 'skills', 'specialty')
 
     def clean_password(self):            
         return self.initial["password"]  

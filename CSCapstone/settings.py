@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'CommentsApp',
     'tinymce',
     'BookmarksApp',
+    'SkillsApp',
 ]
 
 MIDDLEWARE = [

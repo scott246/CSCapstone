@@ -38,6 +38,9 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			{% if userIsMember %}
+			<a href="/project/suggested" class="btn btn-default">Suggested Projects...</a>
+			{% endif %}
 		</div>
 	</div>
 
