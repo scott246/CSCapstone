@@ -9,6 +9,7 @@ from . import models
 from .models import Project
 from CompaniesApp.models import Company
 from GroupsApp.models import Group
+from SkillsApp.models import Skill, Specialty
 from . import forms
 from .forms import ProjectForm, UpdateForm
 from datetime import datetime
@@ -102,39 +103,58 @@ def takeProject(request):
 			return render(request, 'index.html')
 	return render(request, 'autherror.html')
 
+def skillsAreEqual(skill1, skill2):
+	if skill1.name == skill2.name:
+		return True
+	return False
+
+def projectInList(list1, project):
+	for thingus in list1:
+		if thingus.name == project.name:
+			return True
+	return False
+
+#project matching system
 def suggestProject(request):
-	# if request.user.is_authenticated():
-	# 	projects_list = models.Project.objects.all()
-	# 	group = Group.objects.get(members=request.user.id)
-	# 	members = group.members.all()
-	# 	mSkills = ['a']
-	# 	myearsprog = 999
-	# 	suggestedList = ['a']
-	# 	for member in members:
-	# 		print member
-	# 		print member.skills
-	# 		print member.yearsProgramming
-	# 		mSkills.insert(0, member.skills)
-	# 		memberyears = int(member.yearsProgramming)
-	# 		if memberyears < myearsprog:
-	# 			myearsprog = memberyears
-	# 			print myearsprog
-	# 	for project in projects_list:
-	# 		print project.name
-	# 		print project.languages
-	# 		print project.specialty
-	# 		for m in mSkills:
-	# 			for 
-	# 			if (m in project.languages or m in project.specialty) and project.yearsProgramming <= myearsprog:
-	# 				print 'yay'
-	# 				suggestedList.insert(0, project)
-	# 	print mSkills
-	# 	print myearsprog
-	# 	print suggestedList
-	# 	context = {
-	# 		'projects': suggestedList,
-	# 	}
-	#	return render(request, 'projectsuggestions.html', context)
+	if request.user.is_authenticated():
+	 	projects_list = models.Project.objects.all()
+	 	group = Group.objects.get(members=request.user.id)
+	 	members = group.members.all()
+	 	totalSkills = list()
+	 	totalSpecialties = list()
+	 	lowestYearsProgramming = 999
+	 	suggestedList = list()
+
+	 	#takes combined members' skills and specialties...
+	 	for member in members:
+	 		memberSkills = list(member.skills.all())
+	 		memberSpecialties = list(member.specialty.all())
+			totalSkills.extend(memberSkills)
+			totalSpecialties.extend(memberSpecialties)
+			#members with the lowest number of years dictate the entire group's years of experience
+			memberYears = int(member.yearsProgramming)
+			if memberYears < lowestYearsProgramming:
+				lowestYearsProgramming = memberYears
+
+		#...and if a project contains any of these skills/specialties, it's added to the suggestion list
+		for project in projects_list:
+			projectLanguages = list(project.languages.all())
+	 		projectSpecialty = list(project.specialty.all())
+	 		projectYears = int(project.yearsProgramming)
+			for skill in totalSkills:
+				for language in projectLanguages:	
+					if (skillsAreEqual(skill, language)) and (projectYears <= lowestYearsProgramming):
+						if (projectInList(suggestedList, project) == False):
+							suggestedList.append(project)
+			for specialty in totalSpecialties:
+				for pSpecialty in projectSpecialty:
+					if (skillsAreEqual(specialty, pSpecialty)) and (projectYears <= lowestYearsProgramming):
+						if (projectInList(suggestedList, project) == False):
+							suggestedList.append(project)
+		context = {
+			'projects': suggestedList,
+		}
+		return render(request, 'projectsuggestions.html', context)
 	return render(request, 'autherror.html')
 
 def removeProject(request):

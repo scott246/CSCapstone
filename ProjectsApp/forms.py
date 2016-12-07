@@ -5,8 +5,8 @@ from SkillsApp.models import Skill, Specialty
 class ProjectForm(forms.Form):
     name = forms.CharField(label='Name', max_length=30)
     description = forms.CharField(label='Description', max_length=10000)
-    languages = forms.ModelChoiceField(label="Programming Languages", queryset=Skill.objects.all())
-    specialty = forms.ModelChoiceField(label="Specialty", queryset=Specialty.objects.all())
+    languages = forms.ModelMultipleChoiceField(label="Programming Languages", queryset=Skill.objects.all())
+    specialty = forms.ModelMultipleChoiceField(label="Specialty", queryset=Specialty.objects.all())
     yearsProgramming = forms.CharField(label="Years of Programming Required", max_length=3)
 
 
