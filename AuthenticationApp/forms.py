@@ -32,7 +32,7 @@ class RegisterForm(forms.Form):
 
     usertype = forms.ChoiceField(label="Account type", choices=USERS, required=True)
 
-    univ = forms.ModelChoiceField(label="University (or alma mater)", queryset=University.objects.all(), required=False)
+    univ = forms.ModelChoiceField(label="University (if Student or Professor)", queryset=University.objects.all(), required=False)
     company = forms.ModelChoiceField(label="Company (if Engineer)", queryset=Company.objects.all(), required=False)
     #univ = forms.CharField(label="University (or alma mater)", widget=forms.TextInput, required=True)
     skills = forms.ModelMultipleChoiceField(label="Skills", queryset=Skill.objects.all(), to_field_name='name', required=False)
@@ -131,7 +131,7 @@ class AdminUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'first_name', 'last_name')        
+        fields = ('email', 'first_name', 'last_name', 'about', 'skills', 'specialty', 'usertype', )        
 
     def clean_password2(self):
         # Check that the two password entries match

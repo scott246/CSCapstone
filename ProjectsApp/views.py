@@ -16,10 +16,12 @@ from datetime import datetime
 
 def getProjects(request):
 	projects_list = models.Project.objects.all()
-	if Group.objects.get(members=request.user.id) != None:
-		inGroup = True
-	else:
+	try:
+		Group.objects.get(members=request.user.id)
+	except:
 		inGroup = False
+	else:
+		inGroup = True
 	if request.user.usertype == 'ENG':
 		context = {
 			'userInCompany': True,
