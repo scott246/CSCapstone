@@ -63,6 +63,7 @@ def auth_register(request):
 			about=form.cleaned_data['about'],
 			#univ=form.cleaned_data['univ'],
 			skills=form.cleaned_data['skills'],
+			specialty=form.cleaned_data['specialty'],
 			yearsProgramming=form.cleaned_data['yearsprogramming']
 			)
 		new_user.save()	
@@ -82,7 +83,7 @@ def auth_register(request):
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers
-			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'])
+			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'].name)
 			new_engineer.save()
 		login(request, new_user);	
 		messages.success(request, 'Success! Your account was created.')

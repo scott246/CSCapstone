@@ -102,6 +102,41 @@ def takeProject(request):
 			return render(request, 'index.html')
 	return render(request, 'autherror.html')
 
+def suggestProject(request):
+	# if request.user.is_authenticated():
+	# 	projects_list = models.Project.objects.all()
+	# 	group = Group.objects.get(members=request.user.id)
+	# 	members = group.members.all()
+	# 	mSkills = ['a']
+	# 	myearsprog = 999
+	# 	suggestedList = ['a']
+	# 	for member in members:
+	# 		print member
+	# 		print member.skills
+	# 		print member.yearsProgramming
+	# 		mSkills.insert(0, member.skills)
+	# 		memberyears = int(member.yearsProgramming)
+	# 		if memberyears < myearsprog:
+	# 			myearsprog = memberyears
+	# 			print myearsprog
+	# 	for project in projects_list:
+	# 		print project.name
+	# 		print project.languages
+	# 		print project.specialty
+	# 		for m in mSkills:
+	# 			for 
+	# 			if (m in project.languages or m in project.specialty) and project.yearsProgramming <= myearsprog:
+	# 				print 'yay'
+	# 				suggestedList.insert(0, project)
+	# 	print mSkills
+	# 	print myearsprog
+	# 	print suggestedList
+	# 	context = {
+	# 		'projects': suggestedList,
+	# 	}
+	#	return render(request, 'projectsuggestions.html', context)
+	return render(request, 'autherror.html')
+
 def removeProject(request):
 	if request.user.is_authenticated():
 		if (models.Project.objects.get(name=request.GET.get('name', 'None')).company == models.Company.objects.get(members=request.user.id)):

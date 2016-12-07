@@ -13,7 +13,7 @@ from tinymce.widgets import TinyMCE
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, skills=None, yearsProgramming=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, usertype=None, about=None, skills=None, specialty=None, yearsProgramming=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -27,6 +27,7 @@ class MyUserManager(BaseUserManager):
         user.about = about
         #user.univ = univ
         user.skills = skills
+        user.specialty = specialty
         user.yearsProgramming = yearsProgramming
 
         #If first_name is not present, set it as email's username by default
@@ -37,8 +38,16 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email=None, password=None, first_name=None, last_name=None):
-        user = self.create_user(email, password=password, first_name=first_name, last_name=last_name)
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(email=email)
+        user.set_password(password)
+        user.first_name = first_name
+        user.last_name = last_name
         user.is_admin = True
+        if first_name is None or first_name == "" or first_name == '':                                
+            user.first_name = email[:email.find("@")]  
         user.save(using=self._db)
         return user
 
@@ -47,22 +56,6 @@ USERS = (
     ('PRO','Professor'),
     ('ENG','Engineer'),
 )
-
-SKILLS = {
-    ('C', 'C'),
-    ('JAV', 'Java'),
-    ('C++', 'C++'),
-    ('PYT', 'Python'),
-    ('HTM', 'HTML/CSS'),
-    ('SQL', 'SQL'),
-    ('RUB', 'Ruby'),
-    ('JS', 'JavaScript'),
-    ('C#', 'C#'),
-    ('PHP', 'PHP'),
-    ('IOS', 'iOS'),
-    ('AND', 'Android'),
-    ('WEB', 'Web Development'),
-}
 
 
 class MyUser(AbstractBaseUser):
@@ -93,11 +86,8 @@ class MyUser(AbstractBaseUser):
     about = tinymce_models.HTMLField(
         default='')
 
-    skills = models.CharField(
-        max_length=120,
-        null=True,
-        blank=True,
-    )
+    skills = models.ManyToManyField('SkillsApp.Skill', default=None)
+    specialty = models.ManyToManyField('SkillsApp.Specialty', default=None)
 
     yearsProgramming = models.CharField(
         max_length=3,
