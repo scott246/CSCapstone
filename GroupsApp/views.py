@@ -123,4 +123,26 @@ def removeGroup(request):
         return render(request, 'index.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
+
+def getCommentForm(request):
+    comments_list = models.Comment.objects.all()
+    context = {
+        'comments' : comments_list,
+    }
+    return render(request, 'comments.html', context)
+    
+def addComment(request):
+    if request.method == 'POST':
+        form = forms.CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = models.Comment(comment=form.cleaned_data['comment'])
+            new_comment.save()
+            comments_list = models.Comment.objects.all()
+            context = {
+                'comments' : comments_list,
+            }
+            return render(request, 'comments.html', context)
+        else:
+            form = forms.CommentForm()
+    return render(request, 'comments.html')
     
