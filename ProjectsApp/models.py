@@ -7,7 +7,7 @@ from datetime import datetime
 from CompaniesApp.models import Company
 
 class Project(models.Model):
-    def create_project(self, name=None, description=None, created_at=str(datetime.now()), updated_at=str(datetime.now()), company=None, languages=None, yearsProgramming=None, specialty=None):
+    def create_project(self, name=None, description=None, created_at=str(datetime.now()), updated_at=str(datetime.now()), company=None, languages=None, yearsProgramming=None, specialty=None, takenBy=None):
         if not name:
             raise ValueError('Project must have a name')
 
@@ -20,7 +20,8 @@ class Project(models.Model):
         self.company = company
         self.languages = languages
         self.yearsProgramming = yearsProgramming
-        self.specialty = specialty           
+        self.specialty = specialty  
+        self.takenBy = takenBy         
         
         self.save()
         return self
@@ -33,6 +34,7 @@ class Project(models.Model):
     languages = models.ManyToManyField('SkillsApp.Skill', related_name='languages')
     yearsProgramming = models.CharField(max_length=3, default='0')
     specialty = models.ManyToManyField('SkillsApp.Specialty', related_name='specialty')
+    takenBy = models.ForeignKey('GroupsApp.Group', related_name='takenBy', default=0)
 
     # TODO Task 3.5: Add field for company relationship
     # TODO Task 3.5: Add fields for project qualifications (minimum required: programming language, years of experience, speciality)

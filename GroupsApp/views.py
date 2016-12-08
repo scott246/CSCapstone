@@ -6,6 +6,7 @@ from django.shortcuts import render, render_to_response
 from . import models
 from . import forms
 from AuthenticationApp.models import MyUser
+from ProjectsApp.models import Project
 import AuthenticationApp
 
 def getGroups(request):
@@ -23,9 +24,11 @@ def getGroup(request):
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
+        is_project = Project.objects.filter(takenBy__exact=in_group).first()
         context = {
             'group' : in_group,
             'userIsMember': is_member,
+            'selectedProject': is_project,
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in

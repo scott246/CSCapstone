@@ -221,6 +221,7 @@ class Engineer(models.Model):
         null=True,
         blank=True,
     )  
+    company = models.ForeignKey('CompaniesApp.Company', on_delete=models.CASCADE, default=1)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
