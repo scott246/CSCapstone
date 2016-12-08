@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib import messages
 from . import models
-from UniversitiesApp import models
-from CompaniesApp import models
+# from UniversitiesApp import models
+# from CompaniesApp import models
 from . import forms
 from .forms import LoginForm, RegisterForm, UpdateForm
 from .models import MyUser, Student, Professor, Engineer
@@ -73,21 +73,21 @@ def auth_register(request):
 		if (new_user.usertype == 'STU'):
 			#Also registering students		
 			new_student = Student(user = new_user, univ=form.cleaned_data['univ'])
-			in_university = models.University.objects.get(name__exact=form.cleaned_data['univ'].name)
+			in_university = University.objects.get(name__exact=form.cleaned_data['univ'].name)
 			in_university.members.add(new_user)
 			in_university.save();
 			new_student.save()
 		if (new_user.usertype == 'PRO'):	
 			#Also registering professors
 			new_professor = Professor(user = new_user, univ=form.cleaned_data['univ'])
-			in_university = models.University.objects.get(name__exact=form.cleaned_data['univ'].name)
+			in_university = University.objects.get(name__exact=form.cleaned_data['univ'].name)
 			in_university.members.add(new_user)
 			in_university.save();
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers
 			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'], company=form.cleaned_data['company'])
-			in_company = models.Company.objects.get(name__exact=form.cleaned_data['company'].name)
+			in_company = Company.objects.get(name__exact=form.cleaned_data['company'].name)
 			in_company.members.add(new_user)
 			in_company.save()
 			new_engineer.save()
