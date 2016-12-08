@@ -19,3 +19,6 @@ class Group(models.Model):
 class Comment(models.Model):
     time = models.DateTimeField(auto_now=True)
     comment = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.comment

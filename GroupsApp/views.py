@@ -145,4 +145,10 @@ def addComment(request):
         else:
             form = forms.CommentForm()
     return render(request, 'comments.html')
+
+def removeComment(request):
+    comment = models.Comment.objects.get(id=request.GET.get('id', 'None'))
+    comment.delete()
+    return render(request, 'comments.html')
+    
     
