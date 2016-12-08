@@ -11,7 +11,7 @@ class Group(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
     members = models.ManyToManyField(MyUser)
-    project = models.OneToOneField(Project, default=0)
+    project = models.ForeignKey(Project, default=0)
     
     def __str__(self):
         return self.name
