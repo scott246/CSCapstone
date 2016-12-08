@@ -7,33 +7,32 @@ from ProjectsApp.models import Project
 
 # Create your views here.
 def getBookmarks(request):
-	bookmarked_list = models.Bookmark.objects.all()
-	# if Group.objects.get(members=request.user.id) != None:
-# 		inGroup = True
-# 	else:
-# 		inGroup = False
-		
+	bookmarked_list = models.Bookmark.objects.filter(user=request.user)
 	context = {
-		
-		
 		'bookmarks': bookmarked_list,
-		
 	}
-	return render(request, "bookmarks.html")
+	return render(request, "bookmarks.html", context)
 	
 #implement add bookmark function
 def addBookmark(request):
-	#need to do
 	new_bookmark = models.Bookmark()
+	userid = request.user.id
+	projectid = Project.objects.get(name=request.GET.get('name', 'None')).id
 	new_bookmark.create_bookmark(
-		#project_id=models.ForeignKey('ProjectsApp.Project'),
-# 		project_id=request.name
-# 		need to pass project_id as a parameter but not sure how to
+		userid, projectid
 		)
-	return render(request, "bookmarks.html")
+	bookmarked_list = models.Bookmark.objects.filter(user=request.user)
+	context = {
+		'bookmarks': bookmarked_list,
+	}
+	return render(request, "bookmarks.html", context)
 
 #implement remove bookmark function
-def removeBookmark():
-	#need to do
-	return NULL
-	
+def removeBookmark(request):
+	bookmark = models.Bookmark.objects.get(user=request.GET.get('id', 'None'))
+	bookmark.delete()
+	bookmarked_list = models.Bookmark.objects.filter(user=request.user)
+	context = {
+		'bookmarks': bookmarked_list,
+	}
+	return render(request, "bookmarks.html", context)

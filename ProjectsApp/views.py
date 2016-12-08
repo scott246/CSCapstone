@@ -10,6 +10,7 @@ from .models import Project
 from CompaniesApp.models import Company
 from GroupsApp.models import Group
 from SkillsApp.models import Skill, Specialty
+from BookmarksApp.models import Bookmark
 from . import forms
 from .forms import ProjectForm, UpdateForm
 from datetime import datetime

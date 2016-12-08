@@ -6,10 +6,6 @@ from django.db import models
 
 class Bookmark(models.Model):
 	def create_bookmark(self, user_id=None, project_id=None):
-#		self.user_id = models.ForeignKey('AuthenticationApp.MyUser')
-# 		self.project_id = models.ForeignKey('ProjectsApp.Project')
-# 		self.save()
-# 		return self
 		self.user_id = user_id
 		self.project_id = project_id
 		self.save()

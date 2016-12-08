@@ -12,7 +12,8 @@
                 <tbody>
                    {% for item in bookmarks %}
                    <tr>
-                       <td>{{ item.project_id }}</td>
+                       <td>{{ item.project }}</td>
+                       <td> <a href="/bookmarks/remove?id={{item.user.id}}" class="btn btn-default">Remove Bookmark</a></td>
                    </tr>
                    {% endfor %}
                 </tbody>
