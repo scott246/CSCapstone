@@ -23,16 +23,27 @@ def getProjects(request):
 		inGroup = False
 	else:
 		inGroup = True
+
+	try:
+		o = models.Project.objects.filter(takenBy=Group.objects.get(members=request.user.id))
+	except:
+		notInProject = True
+		print 'well then'
+	else:
+		notInProject = False
+
 	if request.user.usertype == 'ENG':
 		context = {
 			'userInCompany': True,
 			'userInGroup': inGroup,
+			'notInProject': notInProject,
 			'projects': projects_list,
 		}
 	else:
 		context = {
 			'userInCompany': False,
 			'userInGroup': inGroup,
+			'notInProject': notInProject,
 			'projects': projects_list,
 		}
 	return render(request, 'projects.html', context)

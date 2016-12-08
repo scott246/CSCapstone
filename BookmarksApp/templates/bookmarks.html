@@ -6,14 +6,15 @@
             <table class="table table-striped sortable">
                 <thead>
                     <tr>
+                      <th></th>
                       <th style="width: 100%">Bookmark</th>
                     </tr>
                 </thead>
                 <tbody>
                    {% for item in bookmarks %}
                    <tr>
-                       <td>{{ item.project }}</td>
-                       <td> <a href="/bookmarks/remove?id={{item.user.id}}" class="btn btn-default">Remove Bookmark</a></td>
+                      <td> <a href="/bookmarks/remove?id={{item.user.id}}" class="btn btn-default">Remove Bookmark</a></td>
+                      <td>{{ item.project }}</td>
                    </tr>
                    {% endfor %}
                 </tbody>
