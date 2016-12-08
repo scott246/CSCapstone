@@ -98,6 +98,7 @@ def takeProject(request):
 		if Group.objects.get(members=request.user.id) != None:
 			project = Project.objects.get(name=request.GET.get('name', 'None'))
 			in_group = Group.objects.get(members=request.user.id)
+			# print project.takenBy
 			# if project.takenBy != 0:
 			#  	return render(request, 'generalerror.html')
 			in_group.project = models.Project.objects.get(name=request.GET.get('name', 'None'))
@@ -158,7 +159,6 @@ def suggestProject(request):
 					if (skillsAreEqual(specialty, pSpecialty)) and (projectYears <= lowestYearsProgramming):
 						if (projectInList(suggestedList, project) == False):
 							suggestedList.append(project)
-		print suggestedList
 		context = {
 			'projects': suggestedList,
 		}

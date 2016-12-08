@@ -11,7 +11,8 @@
 						<th>Project Name</th>
 						<th>Company</th>
 						<th>Description</th>
-						<th> </th>
+						<th>Skills Required</th>
+						<th>Specialty</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -20,6 +21,16 @@
 						<td>{{ project.name }}</td>
 						<td>{{ project.company }}</td>
 						<td>{{ project.description }}</td>
+						<td>
+							{% for skill in project.languages.all %}
+							{{ skill.name }}
+							{% endfor %}
+						</td>
+						<td>
+							{% for specialty in project.specialty.all %}
+							{{ specialty.name }}
+							{% endfor %}
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
