@@ -10,11 +10,14 @@ from django.shortcuts import render
 from django.contrib import messages
 from . import models
 from UniversitiesApp import models
+from CompaniesApp import models
 from . import forms
 from .forms import LoginForm, RegisterForm, UpdateForm
 from .models import MyUser, Student, Professor, Engineer
 from UniversitiesApp.models import University
 import UniversitiesApp
+from CompaniesApp.models import Company
+import CompaniesApp
 from django.core.handlers.wsgi import WSGIRequest
 from StringIO import StringIO
 
@@ -83,7 +86,10 @@ def auth_register(request):
 			new_professor.save()
 		if (new_user.usertype == 'ENG'):	
 			#Also registering engineers
-			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'].name)
+			new_engineer = Engineer(user = new_user, univ=form.cleaned_data['univ'], company=form.cleaned_data['company'])
+			in_company = models.Company.objects.get(name__exact=form.cleaned_data['company'].name)
+			in_company.members.add(new_user)
+			in_company.save()
 			new_engineer.save()
 		login(request, new_user);	
 		messages.success(request, 'Success! Your account was created.')

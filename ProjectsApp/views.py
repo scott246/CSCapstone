@@ -16,10 +16,12 @@ from datetime import datetime
 
 def getProjects(request):
 	projects_list = models.Project.objects.all()
-	if Group.objects.get(members=request.user.id) != None:
-		inGroup = True
-	else:
+	try:
+		Group.objects.get(members=request.user.id)
+	except:
 		inGroup = False
+	else:
+		inGroup = True
 	if request.user.usertype == 'ENG':
 		context = {
 			'userInCompany': True,
@@ -94,9 +96,14 @@ def updateProject(request):
 def takeProject(request):
 	if request.user.is_authenticated():
 		if Group.objects.get(members=request.user.id) != None:
+			project = Project.objects.get(name=request.GET.get('name', 'None'))
 			in_group = Group.objects.get(members=request.user.id)
+			# if project.takenBy != 0:
+			#  	return render(request, 'generalerror.html')
 			in_group.project = models.Project.objects.get(name=request.GET.get('name', 'None'))
 			in_group.save()
+			project.takenBy = in_group
+			project.save()
 			context = {
 				'userInGroup': True
 			}
@@ -151,6 +158,7 @@ def suggestProject(request):
 					if (skillsAreEqual(specialty, pSpecialty)) and (projectYears <= lowestYearsProgramming):
 						if (projectInList(suggestedList, project) == False):
 							suggestedList.append(project)
+		print suggestedList
 		context = {
 			'projects': suggestedList,
 		}

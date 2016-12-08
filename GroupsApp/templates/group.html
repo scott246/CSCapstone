@@ -21,19 +21,56 @@
 			{% endif %}
 		</div>
 	</div>
+
+	<div class="container">
+		<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th>Project Name</th>
+						<th>Description</th>
+						<th>Company</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{{ selectedProject.name }}</td>
+						<td>{{ selectedProject.description }}</td>
+						<td>{{ selectedProject.company }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 	
 	<div class="container">
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
 				<thead>
 					<tr>
-						<th>Users</th>
+						<th>User</th>
+						<th>Email</th>
+						<th>About</th>
+						<th>Skills</th>
+						<th>Specialty</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for item in group.members.all %}
 					<tr>
 						<td>{{ item.get_full_name }}</td>
+						<td>{{ item.get_email }}</td>
+						<td>{{ item.about }}</td>
+						<td>
+							{% for skill in item.skills.all %}
+							{{ skill.name }}
+							{% endfor %}
+						</td>
+						<td>
+							{% for specialty in item.specialty.all %}
+							{{ specialty.name }}
+							{% endfor %}
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
