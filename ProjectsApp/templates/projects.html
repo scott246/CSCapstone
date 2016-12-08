@@ -8,6 +8,7 @@
 			<table class="table table-striped sortable">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Project Name</th>
 						<th>Company</th>
 						<th> </th>
@@ -16,6 +17,10 @@
 				<tbody>
 					{% for project in projects %}
 					<tr>
+						<td>
+							<!--Temp for BookMark/Unbookmark button, need to change for functionality-->
+							<a href="/bookmarks/add?name={{project.name}}" class="btn btn-default">Bookmark</a>
+						</td>
 						<td>{{ project.name }}</td>
 						<td>{{ project.company }}</td>
 						{% if userInCompany %}
